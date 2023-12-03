@@ -1,0 +1,9 @@
+.scroll-fade-in {
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+  
+  .scroll-fade-in.fade-in {
+    opacity: 1;
+  }
+  
