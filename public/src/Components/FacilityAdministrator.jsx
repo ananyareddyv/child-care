@@ -27,18 +27,24 @@ import EnrollTeacher from './EnrollTeacher';
 import TerminateStaff from './TerminateStaff';
 import ClassroomManagement from './ClassroomManagement';
 import Classroom from './Classrooms';
+import StaffAttendance from './StaffAttendance';
+import AbsenteesReport from './AbsentReport';
+import AgeCategoryReport from './AttendanceReport';
 const FacilityAdminUI = () => {
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
   const [withdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
   const [classroomDialogOpen, setclassroomDialogOpen] = useState(false);
   const [hireDialogOpen, setHireDialogOpen] = useState(false);
   const [terminateDialogOpen, setTerminateDialogOpen] = useState(false);
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [usersLoaded, setUsersLoaded] = useState(false);
   const [withdrawalrequests,setWithdrawalrequests]=useState(false);
   const currentDate = new Date().toLocaleDateString('en-US').replace(/\//g, ''); 
   const [classrooms,setClassrooms]=useState(null);
   const [withdrawalUsers,setWithdrawalUsers]=useState([]);
+  const [teacherUsers, setTeacherUsers] = useState([]);
+  const [parentUsers, setParentUsers] = useState([]);
   // ... other state and functions remain the same
 
   useEffect(() => {
@@ -65,6 +71,12 @@ const FacilityAdminUI = () => {
         });
 
         setAllUsers(updatedUsersData);
+        const teacherUsers = updatedUsersData.filter(user => user.role === 'teacher');
+          const parentUsers = updatedUsersData.filter(user => user.role === 'parents');
+          console.log(teacherUsers);
+          
+          setTeacherUsers(teacherUsers);
+          setParentUsers(parentUsers);
         setUsersLoaded(true);
       } catch (error) {
         console.error('Error fetching users:', error.message);
@@ -111,7 +123,8 @@ const FacilityAdminUI = () => {
     setHireDialogOpen(false);
     setTerminateDialogOpen(false);
     setWithdrawalrequests(false);
-    setclassroomDialogOpen(false)
+    setclassroomDialogOpen(false);
+    setReportDialogOpen(false);
     const db = getFirestore(app);
     const usersCollectionRef = collection(db, 'users');
   
@@ -135,6 +148,7 @@ const FacilityAdminUI = () => {
       });
   
       setAllUsers(updatedUsersData);
+      
     } catch (error) {
       console.error('Error fetching and updating users:', error.message);
     }
@@ -231,6 +245,11 @@ const FacilityAdminUI = () => {
       alert('User already checked in for the day');
     }
   };
+  const handleReports=()=>{
+
+    setReportDialogOpen(true);
+
+  }
   
   const handleCheckOut = async (userData) => {
     const currentDate = new Date().toLocaleDateString('en-US').replace(/\//g, '');
@@ -267,6 +286,29 @@ const FacilityAdminUI = () => {
       alert('User already checked out for the day or not checked in');
     }
   };
+  const [selectedReport, setSelectedReport] = useState(null);
+
+  const handleReportButtonClick = (reportNumber) => {
+    // Set the selected report based on the button click
+    setSelectedReport(reportNumber);
+  };
+
+  // Render the content based on the selected report
+  const renderReportContent = () => {
+    switch (selectedReport) {
+      case 1:
+        return <AbsenteesReport userData={allUsers}/>;
+      case 2:
+        return <AgeCategoryReport userData={allUsers}/>;
+      case 3:
+        return <Typography>Report3</Typography>;
+      case 4:
+        return <Typography>Report4</Typography>;
+      default:
+        return null;
+    }
+  };
+
   
   return (
     <Box>
@@ -319,6 +361,11 @@ const FacilityAdminUI = () => {
         <Box>
           <Button variant="outlined" onClick={handleClassroom}>
             ClassRoom Update
+          </Button>
+        </Box>
+        <Box>
+          <Button variant="outlined" onClick={handleReports}>
+            Reports
           </Button>
         </Box>
       </Box>
@@ -403,6 +450,22 @@ const FacilityAdminUI = () => {
           <Button onClick={handleCloseDialogs}>Close</Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog open={reportDialogOpen} onClose={handleCloseDialogs} fullWidth maxWidth="md">
+      <DialogTitle>Reports</DialogTitle>
+      <DialogContent>
+        <Button onClick={() => handleReportButtonClick(1)}>Absentees Report </Button>
+        <Button onClick={() => handleReportButtonClick(2)}>Presentees Report</Button>
+        
+
+        {/* Render the selected report content */}
+        {renderReportContent()}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseDialogs}>Close</Button>
+      </DialogActions>
+    </Dialog>
+
       {usersLoaded&&(<Box sx={{ marginTop: '20px', padding: '20px', border: '1px solid #ddd' }}>
       <Typography variant="h5" gutterBottom>
           All Users Details

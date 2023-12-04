@@ -1,6 +1,10 @@
 import React from 'react';
 import { Container, Typography, AppBar, Toolbar, IconButton, Grid, Paper } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import GamesIcon from '@mui/icons-material/Games';
+import { Games } from '@mui/icons-material';
+import NaturePeopleIcon from '@mui/icons-material/NaturePeople';
+import CastForEducationIcon from '@mui/icons-material/CastForEducation';
 
 const Home = () => {
   return (
@@ -46,20 +50,20 @@ const Home = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <Paper style={{ padding: '10px', textAlign: 'center' }}>
-              <img src="image1.jpg" alt="Indoor Activities" style={{ maxWidth: '100%', height: 'auto' }} />
+              <Games/>
               <Typography variant="subtitle1" style={{ marginTop: '10px' }}>Indoor Activities</Typography>
             </Paper>
           </Grid>
           <Grid item xs={12} md={4}>
             <Paper style={{ padding: '10px', textAlign: 'center' }}>
-              <img src="image2.jpg" alt="Outdoor Play Area" style={{ maxWidth: '100%', height: 'auto' }} />
-              <Typography variant="subtitle1" style={{ marginTop: '10px' }}>Outdoor Play Area</Typography>
+              <NaturePeopleIcon/>
+                <Typography variant="subtitle1" style={{ marginTop: '10px' }}>Outdoor Play Area</Typography>
             </Paper>
           </Grid>
           <Grid item xs={12} md={4}>
             <Paper style={{ padding: '10px', textAlign: 'center' }}>
-              <img src="image3.jpg" alt="Educational Materials" style={{ maxWidth: '100%', height: 'auto' }} />
-              <Typography variant="subtitle1" style={{ marginTop: '10px' }}>Educational Materials</Typography>
+              <CastForEducationIcon/>
+                <Typography variant="subtitle1" style={{ marginTop: '10px' }}>Educational Materials</Typography>
             </Paper>
           </Grid>
         </Grid>

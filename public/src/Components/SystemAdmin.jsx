@@ -21,6 +21,8 @@ import { collection, doc, getDocs, getFirestore } from 'firebase/firestore';
 import { app } from '../Data/firebase';
 import Classroom from './Classrooms';
 import AbsenteesReport from './AbsentReport';
+import EnrollFacilityAdministrator from './EnrollFacilityAdministrator';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 const drawerWidth = 240;
 
@@ -109,13 +111,14 @@ const SystemAdmin = () => {
         return <Classroom classrooms={classrooms}/>;
       case 'Absent':
         return <AbsenteesReport userData={userData}/>
-        
+      case 'FA':
+          return <EnrollFacilityAdministrator/>
+          
       // Add more cases for other sections if needed
       default:
         return (
           <div>
-            <h2>Generic Content Section</h2>
-            <p>This is where your generic content goes.</p>
+            <EnrollFacilityAdministrator/>
           </div>
         );
     }
@@ -146,6 +149,7 @@ const SystemAdmin = () => {
             <DrawerItem text="Child Attendance" icon={<PeopleIcon />} onClick={() => handleSectionClick('childAttendance')} />
             <DrawerItem text="Absent Report" icon={<DescriptionIcon />} onClick={() => handleSectionClick('Absent')} />
             <DrawerItem text="Classrooms" icon={<ClassIcon />} onClick={() => handleSectionClick('Classrooms')} />
+            <DrawerItem text="Enroll" icon={<PersonAddIcon />} onClick={() => handleSectionClick('FA')} />
           </List>
           <Divider />
         </Box>

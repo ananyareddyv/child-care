@@ -71,12 +71,19 @@ const ClassroomManagement = () => {
 
   const getUniqueUnassignedTeachers = () => {
     const assignedTeachers = Object.values(classrooms).reduce(
-      (acc, classroom) => [...acc, ...classroom.assignedStaff],
+      (acc, classroom) => {
+        // Check if assignedStaff is not empty before adding to the accumulator
+        if (classroom.assignedStaff.length > 0) {
+          return [...acc, ...classroom.assignedStaff];
+        }
+        return acc;
+      },
       []
     );
-
+  
     return teachers.filter((teacher) => !assignedTeachers.includes(teacher.id));
   };
+  
 
   const handleAssignStaff = async () => {
     if (!selectedClassroom || !selectedTeacher) {

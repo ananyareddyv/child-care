@@ -181,6 +181,30 @@ const ChildProfile = ({ userData }) => {
             margin="normal"
             disabled
           />
+          <TextField
+            label="Allergies"
+            name="allergies"
+            value={editedData.allergies}
+            onChange={handleInputChange}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Address"
+            name="address"
+            value={editedData.address}
+            onChange={handleInputChange}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Phone Number"
+            name="phoneNumber"
+            value={editedData.phoneNumber}
+            onChange={handleInputChange}
+            fullWidth
+            margin="normal"
+          />
           {/* Add more fields as needed */}
 
         </DialogContent>

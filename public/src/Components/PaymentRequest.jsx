@@ -70,9 +70,13 @@ const PaymentInitiationComponent =  ({ userData }) => {
     return `${month}${day}${year}`;
   };
   const monday=getCurrentMondayKey();
-  const [isPaymentReceived,setIsPaymentRecieved]=useState(userData[monday].isPaymentReceived);
+  let paymentRec=false;
+  if (userData[monday] && userData[monday].hasOwnProperty("isPaymentReceived")) {
+    paymentRec=userData[monday].isPaymentReceived;
+}
+  const [isPaymentReceived,setIsPaymentRecieved]=useState(paymentRec);
 
- 
+ console.log(userData.hasOwnProperty("monday") )
   console.log(getCurrentMondayKey())
  
   const updateLedgerInFirebase = async (userId, transactionDetails) => {

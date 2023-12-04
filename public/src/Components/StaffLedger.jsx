@@ -22,6 +22,7 @@ const StaffLedger = ({ user }) => {
 
         if (userLedgerSnapshot.exists()) {
           setUserLedger(userLedgerSnapshot.data());
+          console.log(userLedgerSnapshot.data());
         } else {
           console.error('User ledger document does not exist.');
         }

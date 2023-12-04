@@ -1,55 +1,59 @@
 import React, { useState, useEffect } from 'react';
-import TextField from '@mui/material/TextField';
 import {
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Grid,
   Table,
-  TableBody,
-  TableCell,
-  TableContainer,
   TableHead,
   TableRow,
+  TableCell,
+  TableBody,
+  TableContainer,
   Paper,
-  Typography,
 } from '@mui/material';
 
-const AbsenteesReport = ({ userData }) => {
-  const [selectedDate, setSelectedDate] = useState(null); // State for the selected date
-  const [absenteesData, setAbsenteesData] = useState([]);
+const AgeCategoryReport = ({ userData }) => {
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showData, setShowData] = useState(false);
+  const [absenteesData, setAbsenteesData] = useState([]); // Use state to store parent users
 
   useEffect(() => {
-   
-    const absentees = userData.filter(user => 
-        !user[selectedDate] && user.role !== 'SA' && user.role !== 'FA'
-      );
-      
-    setAbsenteesData(absentees);
+    const presentUsers = userData.filter(user => 
+      user[selectedDate] && user.role !== 'SA' && user.role !== 'FA'
+    );
+
+    // Update parentUsersList with presentUsers
+    setAbsenteesData(presentUsers);
   }, [userData, selectedDate]);
 
   const handleDateChange = (event) => {
     setSelectedDate(event.target.value);
-	  const originalDate = event.target.value;
-    
+    const originalDate = event.target.value;
+  
     // Parse the original date
     const parts = originalDate.split("-");
     const year = parts[0];
     let month = parts[1];
     let day = parts[2];
-    console.log(day)
     day = day.replace(/^0/, '');
 
     const newDate = month + day + year;
-    const absentees = userData.filter(user => 
-        !user[newDate] && user.role !== 'SA' && user.role !== 'FA'
-      );
-      console.log(absentees)
-      setAbsenteesData(absentees)
-      
+    const usersWithNewDate = userData.filter(user => user[newDate] !== undefined);
 
+    // Update parentUsersList with usersWithNewDate
+    setAbsenteesData(usersWithNewDate);
+
+    // Set showData to true
+    setShowData(true);
   };
 
   return (
     <div>
-      <Typography>Absentees Report</Typography>
-      {/* Material-UI TextField */}
+      <Typography variant="h6" gutterBottom>
+        Present Users Report
+      </Typography>
       <TextField
         type="date"
         id="datePicker"
@@ -61,7 +65,7 @@ const AbsenteesReport = ({ userData }) => {
         InputLabelProps={{ shrink: true }}
       />
 
-      {absenteesData.length > 0 ? (
+{absenteesData.length > 0 ? (
         <TableContainer component={Paper} style={{ marginTop: '16px' }}>
           {/* Material-UI Table */}
           <Table>
@@ -88,10 +92,10 @@ const AbsenteesReport = ({ userData }) => {
           </Table>
         </TableContainer>
       ) : (
-        <p>No absentees on {selectedDate}</p>
+        <p>No Presentes on {selectedDate}</p>
       )}
     </div>
   );
 };
 
-export default AbsenteesReport;
+export default AgeCategoryReport;

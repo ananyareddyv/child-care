@@ -36,6 +36,13 @@ const Register = () => {
 
   const [waitingList, setWaitingList] = useState(false);
   let waitlist=false;
+  const capacityLimits = {
+    Infant: 8,
+    Toddler: 12,
+    Twaddler: 16,
+    '3Year': 18,
+    '4Year': 20,
+  };
 
   const handleEnroll = async () => {
     setLoading(true); // Set loading to true when enrollment process starts
@@ -108,12 +115,23 @@ const Register = () => {
         regstatus="Child Has Been Enrolled...!!";
       }
       const classroomDocRef = doc(db, 'classrooms', ageCategory);
+    const classroomDoc = await getDoc(classroomDocRef);
+    const classroomData = classroomDoc.data() || {};
+    const enrolledChildrenCount = (classroomData.enrolledChildren || []).length;
 
-        // Add child to the classroom
-        await updateDoc(classroomDocRef, {
-          enrolledChildren: arrayUnion(user.email),
-        });
-
+    if (enrolledChildrenCount < capacityLimits[ageCategory]) {
+      // Enroll the child
+      await updateDoc(classroomDocRef, {
+        enrolledChildren: arrayUnion(user.email),
+      });
+    }
+    else {
+      // Age group limit exceeded, add child to waiting list
+      await setDoc(waitingListDocRef, { userid: user.email });
+      setWaitingList(true);
+      waitlist = true;
+      regstatus = "Child has been added to the waiting list...!!";
+    }
       // Store additional information in Firestore
       const userDocRef = doc(db, 'users', user.email);
       await setDoc(userDocRef, {

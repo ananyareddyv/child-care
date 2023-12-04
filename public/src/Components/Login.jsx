@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { app } from '../Data/firebase';
+import { doc, getDoc, getFirestore } from 'firebase/firestore';
+import Cookies from 'js-cookie';
 import { Grid, TextField, Paper, Box, CircularProgress, Button, AppBar, Toolbar, Typography, Alert } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { doc, getDoc, getFirestore } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import '../Images/Login.jpg';
+import FacilityAdminUI from './FacilityAdministrator';
+import ParentDashboard from './ParentDashboard';
+import StaffDashboard from './StaffDashboard';
+import SystemAdmin from './SystemAdmin';
 
 const Container = styled(Box)(({ theme }) => ({
   flexGrow: 1,
@@ -25,12 +28,15 @@ const Item = styled(Paper)(({ theme }) => ({
   marginTop: theme.spacing(2),
 }));
 
+// ... (imports)
+
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errmsg,setErrmsg]=useState(null);
-  const navigate = useNavigate();
+  const [errmsg, setErrmsg] = useState(null);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState();
 
   const inputStyle = { width: '100%', marginBottom: '20px' };
   const buttonStyle = { width: '100%', marginBottom: '20px' };
@@ -56,27 +62,34 @@ function Login() {
         const userRole = userData.role;
 
         Cookies.set('userRole', userRole, { expires: 7 });
+        setUserRole(userRole)
 
-        if (userRole === 'FA') {
-          navigate('/facility-admin');
-        } else if (userRole === 'parents') {
-          navigate('/parent-dashboard');
-        } else if (userRole === 'teacher') {
-          navigate('/staff-dashboard');
-        } else if (userRole === 'SA') {
-          navigate('/admin');
-        }
+        // Set the logged in state to true
+        setLoggedIn(true);
       } else {
         console.error('User document not found.');
+        setErrmsg('Invalid email/password');
       }
     } catch (error) {
       console.error('Login failed:', error);
-      setErrmsg('invalid email/password')
+      setErrmsg('Invalid email/password');
     } finally {
       setLoading(false);
     }
   };
 
+  // If the user is logged in, don't render the login form
+  if (loggedIn) {
+    return (
+      <Container>
+        {/* Render the user-specific component based on user's role */}
+        {userRole === 'FA' && <FacilityAdminUI />}
+        {userRole === 'parents' && <ParentDashboard />}
+        {userRole === 'teacher' && <StaffDashboard />}
+        {userRole === 'SA' && <SystemAdmin />}
+      </Container>
+    );
+  }
 
   return (
     <Container>
@@ -114,7 +127,7 @@ function Login() {
           >
             {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
           </Button>
-          {errmsg&&<Alert severity="error">{errmsg}</Alert>}
+          {errmsg && <Alert severity="error">{errmsg}</Alert>}
         </Item>
       </Grid>
     </Container>

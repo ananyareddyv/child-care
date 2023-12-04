@@ -4,9 +4,9 @@ import { updateDoc, doc, getDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-const StaffSign = ({userData}) => {
+const StaffSign = ({ userData }) => {
   const [checkInStatus, setCheckInStatus] = useState(false);
-  const [checkOut, setCheckOutStatus] = useState(false);
+  const [checkOutStatus, setCheckOutStatus] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
 
   const auth = getAuth();
@@ -14,15 +14,16 @@ const StaffSign = ({userData}) => {
   const db = getFirestore();
 
   useEffect(() => {
-    // Disable buttons by default if the user is checked out
+    if (!userData) {
+      return;
+    }
+
     const currentDate = new Date().toLocaleDateString('en-US').replace(/\//g, '');
-    console.log(userData)
-    const checkStatus=userData[currentDate].checkin;
-    console.log(currentDate)
+    const checkStatus = userData[currentDate]?.checkin;
     setIsDisabled(checkStatus);
-    setCheckInStatus(checkStatus)
-    setCheckOutStatus(userData[currentDate].checkout)
-  }, [checkInStatus]);
+    setCheckInStatus(checkStatus);
+    setCheckOutStatus(userData[currentDate]?.checkout);
+  }, [userData]);
 
   const handleSignIn = async () => {
     const currentDate = new Date().toLocaleDateString('en-US').replace(/\//g, '');
@@ -88,7 +89,6 @@ const StaffSign = ({userData}) => {
         alert('User signed out for the day');
 
         setCheckInStatus(false);
-
       } else {
         console.log('User not found');
         alert('User not found');
@@ -113,11 +113,10 @@ const StaffSign = ({userData}) => {
         variant="contained"
         color="secondary"
         onClick={handleSignOut}
-        disabled={!isDisabled|| checkOut  }
+        disabled={!isDisabled || checkOutStatus}
       >
         Sign Out
       </Button>
-
     </div>
   );
 };
